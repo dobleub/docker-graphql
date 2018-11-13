@@ -1,0 +1,28 @@
+{
+  "name": "simple-graphql-server",
+  "version": "1.0.0",
+  "description": "Graphql Server",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "Edd Osorio",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.2.0",
+    "apollo-server-express": "^2.2.0",
+    "assert": "^1.4.1",
+    "deasync": "^0.1.13",
+    "dotenv": "^6.1.0",
+    "express": "^4.16.4",
+    "gql": "^1.1.2",
+    "graphql": "^14.0.2",
+    "graphql-tools": "^4.0.3",
+    "lodash": "^4.17.11",
+    "mongodb": "^3.1.9"
+  }
+}
