@@ -1,0 +1,22 @@
+version: '3.3'
+
+services:
+  app:
+    container_name: 'api-graphql'
+    build:
+      context: ./
+    volumes:
+      - ./app:/usr/src/app
+      - node-modules-gql:/usr/src/app/node_modules
+      - ./logs:/home/node/.npm/_logs
+    ports:
+      - 4000:4000
+    networks:
+      - allInOne
+
+networks:
+  allInOne:
+    external: true
+
+volumes:
+  node-modules-gql:
