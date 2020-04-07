@@ -25,14 +25,15 @@ RUN chmod -R 777 ${N_PATH}
 # Adding files to project
 COPY ./app .
 RUN chown -R ${N_USER}:${N_USER} .
-COPY --chown=$N_USER:$N_USER --from=node_cache /src/node_modules ./node_modules
-COPY --chown=$N_USER:$N_USER --from=node_cache /src/package-lock.json ./package-lock.json
+COPY --chown=${N_USER}:${N_USER} --from=node_cache /src/node_modules ./node_modules
+COPY --chown=${N_USER}:${N_USER} --from=node_cache /src/package-lock.json ./package-lock.json
 
 # Setting up logs dir
 RUN mkdir -p /home/${N_USER}/.npm/_logs
 RUN chown -R ${N_USER}:${N_USER} /home/${N_USER}/.npm
 
 USER ${N_USER}
+# CMD [ "pm2", "logs" ]
 CMD [ "nodemon", "-L", "index.js" ]
 # CMD [ "nodemon", "-L", "./app.js" ]
 # CMD [ "pm2-runtime", "/usr/src/app/ecosystem.json" ]

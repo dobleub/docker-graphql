@@ -11,7 +11,6 @@ const typeDefs = `
 	}
 
 	type Task {
-		_id: String
 		id: String
 		title: String
 		description: String

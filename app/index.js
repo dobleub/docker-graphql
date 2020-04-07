@@ -1,9 +1,8 @@
 'use strict';
 
 const http = require('http');
-const express = require('express');
-const { ApolloServer, gql } = require('apollo-server-express');
-const { RedisCache } = require('apollo-server-cache-redis');
+const { execute, parse } = require('graphql');
+const { compileQuery } = require('graphql-jit');
 const Mongoose = require('mongoose');
 const dotenv = require('dotenv');
 // Custom imports
@@ -25,49 +24,27 @@ const PATH = process.env.APP_URI || '/graphql';
 const SUBS_PATH = process.env.APP_WS_URI;
 
 // Setting up Server
-const app = express();
-const httpServer = http.createServer(app);
+const cache = {};
+const httpServer = http.createServer((req, res) => {
+	let payload = '';
 
-// The ApolloServer constructor requires two parameters: your schema
-// definition and your set of resolvers.
-const server = new ApolloServer({ 
-	schema: superSchema,
-	dataSources,
-	context: ({req, res, connection}) => {
-		if (connection) {
-			return connection.context;
-		} else {
-			const token = req.headers.authorization || "";
-			return token;
-		}
-		//console.log('On context');
-	},
-	subscriptions: { 
-		// path: `${SUBS_PATH}${PATH}`,
-		onConnect: (connectionParams, websocket, context) => {
-			console.log('🚀 Subscriptions already connected');
-		},
-		onDisconnect: (websocket, context) => {
-			console.log('🚀 Subscriptions disconnected');
-		}
-	},
-	cache: new RedisCache({
-		password: '8QyugR2j7dHvn7L2me8YENxfA',
-		host: 'redis_server',
-		port: 6379,
-		db: 3,
-	}),
-	trace: true
+	req.on('data', (chunk) => {
+		payload += chunk.toString();
+	});
+
+	req.on('end', async () => {
+		const { query } = JSON.parse(payload);
+
+		cache[query] = cache[query] || compileQuery(superSchema, parse(query));
+		
+		const result = await cache[query].query({}, { dataSources });
+		res.end(JSON.stringify(result));
+	});
 });
 
-server.applyMiddleware({ app, path: PATH });
-server.installSubscriptionHandlers(httpServer);
-
 // The `listen` method launches a web server.
-//app.listen({ port: PORT }, () => {
 httpServer.listen(PORT, () => {
-	console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
-	console.log(`🚀 Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`);
+	console.log(`🚀 Server ready at http://localhost:${PORT}${PATH}`);
 });
 
 process.on('SIGINT', () => {

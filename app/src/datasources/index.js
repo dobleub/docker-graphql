@@ -2,8 +2,8 @@
 
 const TaskDS = require('./task');
 
-const dataSources = () => ({
+const dataSources = {
 	TaskDS: new TaskDS(),
-});
+};
 
 module.exports = dataSources;

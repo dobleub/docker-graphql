@@ -41,8 +41,12 @@ class TaskDS extends DataSource {
 
 	async create(data) {
 		var newTask = new Task(data);
-		await newTask.save();
-		return newTask;
+		let saved = await newTask.save();
+
+		if (isset(saved._id)) {
+			saved.id = saved._id;
+		}
+		return saved;
 	}
 
 	async delete(data) {
@@ -50,6 +54,7 @@ class TaskDS extends DataSource {
 			return Task.findOne({_id: data.id, status: true})
 				.then(async (task) => {
 					const tmpTask = task;
+					tmpTask.id = task._id;
 					if (task) {
 						// task.remove();
 						task.status = false;
@@ -85,6 +90,7 @@ class TaskDS extends DataSource {
 						}
 						task.updatedAt = new Date();
 						await task.save();
+						task.id = task._id;
 					}
 					return task;
 				});
