@@ -42,6 +42,9 @@ class TaskDS extends DataSource {
 	async create(data) {
 		var newTask = new Task(data);
 		await newTask.save();
+		if (isset(newTask._id)) {
+			newTask.id = newTask._id;
+		}
 		return newTask;
 	}
 
@@ -55,6 +58,7 @@ class TaskDS extends DataSource {
 						task.status = false;
 						task.deletedAt = new Date();
 						await task.save();
+						tmpTask.id = task._id;
 					}
 					return tmpTask;
 				});
@@ -85,6 +89,7 @@ class TaskDS extends DataSource {
 						}
 						task.updatedAt = new Date();
 						await task.save();
+						task.id = task._id;
 					}
 					return task;
 				});
