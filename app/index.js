@@ -38,6 +38,9 @@ const httpServer = http.createServer((req, res) => {
 		cache[query] = cache[query] || compileQuery(superSchema, parse(query));
 		
 		const result = await cache[query].query({}, { dataSources });
+		res.writeHead(200, {
+			"Content-Type": "application/json"
+		});
 		res.end(JSON.stringify(result));
 	});
 });
