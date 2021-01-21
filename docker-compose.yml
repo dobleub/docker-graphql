@@ -12,10 +12,10 @@ services:
     ports:
       - 4000:4000
     networks:
-      - allInOne
+      - all-in-one
 
 networks:
-  allInOne:
+  all-in-one:
     external: true
 
 volumes:
